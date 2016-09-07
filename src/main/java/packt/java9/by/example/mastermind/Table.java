@@ -2,6 +2,7 @@ package packt.java9.by.example.mastermind;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Represents the state of the table of the game.
@@ -13,7 +14,7 @@ public class Table {
 
     public Table(int nrColumns, ColorManager manager) {
         this.nrColumns = nrColumns;
-        this.rows = new LinkedList<>();
+        this.rows = new CopyOnWriteArrayList<>();
         this.manager = manager;
     }
 
