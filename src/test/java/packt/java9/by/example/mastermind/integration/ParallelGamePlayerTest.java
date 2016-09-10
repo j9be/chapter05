@@ -23,13 +23,13 @@ public class ParallelGamePlayerTest {
     private String out = "";
 
     private void print(String s) {
-//        System.out.print(s);
+        System.out.print(s);
         out += s;
     }
 
     private void println(String s) {
         print(s);
-//        System.out.println();
+        System.out.println();
         out += "\n";
     }
 

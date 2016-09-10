@@ -3,7 +3,6 @@ package packt.java9.by.example.mastermind;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class Guess {
     final static public Guess none = new Guess(new Color[0]);
@@ -144,10 +143,11 @@ public class Guess {
         if (this == none) {
             return "none";
         } else {
-            return Arrays
-                    .stream(colors)
-                    .map(c -> c.toString())
-                    .collect(Collectors.joining(""));
+            String s = "";
+            for (int i = colors.length - 1; i >= 0; i--) {
+                s += colors[i];
+            }
+            return s;
         }
     }
 }

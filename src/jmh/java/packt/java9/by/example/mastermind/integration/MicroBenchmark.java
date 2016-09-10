@@ -32,10 +32,10 @@ public class MicroBenchmark {
 
     @Benchmark
     @Fork(1)
-    public void play(ThreadsAndQueueSizes t3qs) throws InterruptedException {
+    public void playParallel(ThreadsAndQueueSizes t3qs) throws InterruptedException {
         int nrThreads = Integer.valueOf(t3qs.nrThreads);
         int queueSize = Integer.valueOf(t3qs.queueSize);
-        new ParallelGamePlayer(nrThreads, queueSize).playParallel();
+        new ParallelGamePlayer(nrThreads, queueSize).play();
     }
 
     @Benchmark

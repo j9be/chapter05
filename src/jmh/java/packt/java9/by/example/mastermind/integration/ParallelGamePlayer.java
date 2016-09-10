@@ -4,12 +4,13 @@ package packt.java9.by.example.mastermind.integration;
 import packt.java9.by.example.mastermind.*;
 import packt.java9.by.example.mastermind.lettered.LetteredColorFactory;
 
+import java.util.LinkedList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ParallelGamePlayer {
+public class ParallelGamePlayer implements Player {
 
     private static final int NR_COLORS = 10;
     final ColorManager manager = new ColorManager(NR_COLORS, new LetteredColorFactory());
@@ -22,20 +23,20 @@ public class ParallelGamePlayer {
         this.nrThreads = nrThreads;
     }
 
-    public void playParallel() {
+    @Override
+    public void play() {
         Table table = new Table(NR_COLUMNS, manager);
-        Guess secret = createSecret();
-        Game game = new Game(table, secret);
+        Secret secret = new RandomSecret(manager);
+        Guess secretGuess = secret.createSecret(NR_COLUMNS);
+        Game game = new Game(table, secretGuess);
         final IntervalGuesser[] guessers = createGuessers(table);
         startAsynchronousGuessers(guessers);
         final Guesser finalCheckGuesser = new UniqueGuesser(table);
-        int serial = 1;
         try {
             while (!game.isFinished()) {
                 final Guess guess = guessQueue.take();
                 if (finalCheckGuesser.guessMatch(guess)) {
                     game.addNewGuess(guess);
-                    serial++;
                 }
             }
         } catch (InterruptedException ie) {
@@ -56,21 +57,7 @@ public class ParallelGamePlayer {
 
     private void stopAsynchronousGuessers(IntervalGuesser[] guessers) {
         executorService.shutdown();
-    }
-
-    private Guess createSecret() {
-        Color[] colors = new Color[NR_COLUMNS];
-        int count = 0;
-        Color color = manager.firstColor();
-        while (count < NR_COLORS - NR_COLUMNS) {
-            color = manager.nextColor(color);
-            count++;
-        }
-        for (int i = 0; i < NR_COLUMNS; i++) {
-            colors[i] = color;
-            color = manager.nextColor(color);
-        }
-        return new Guess(colors);
+        guessQueue.drainTo(new LinkedList<>());
     }
 
     private IntervalGuesser[] createGuessers(Table table) {

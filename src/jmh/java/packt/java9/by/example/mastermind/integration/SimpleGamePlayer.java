@@ -3,29 +3,17 @@ package packt.java9.by.example.mastermind.integration;
 import packt.java9.by.example.mastermind.*;
 import packt.java9.by.example.mastermind.lettered.LetteredColorFactory;
 
-public class SimpleGamePlayer {
-    final int nrColors = 12;
-    final int nrColumns = 7;
-    final ColorManager manager = new ColorManager(nrColors, new LetteredColorFactory());
-    private Guess createSecret() {
-        Color[] colors = new Color[nrColumns];
-        int count = 0;
-        Color color = manager.firstColor();
-        while (count < nrColors - nrColumns) {
-            color = manager.nextColor(color);
-            count++;
-        }
-        for (int i = 0; i < nrColumns; i++) {
-            colors[i] = color;
-            color = manager.nextColor(color);
-        }
-        return new Guess(colors);
-    }
+public class SimpleGamePlayer implements Player {
+    final int nrColors = 10;
+    final int nrColumns = 6;
+    final private ColorManager manager = new ColorManager(nrColors, new LetteredColorFactory());
 
+    @Override
     public void play() {
         Table table = new Table(nrColumns, manager);
-        Guess secret = createSecret();
-        Game game = new Game(table, secret);
+        Secret secret = new RandomSecret(manager);
+        Guess secretGuess = secret.createSecret(nrColumns);
+        Game game = new Game(table, secretGuess);
 
         Guesser guesser = new UniqueGuesser(table);
         while (!game.isFinished()) {

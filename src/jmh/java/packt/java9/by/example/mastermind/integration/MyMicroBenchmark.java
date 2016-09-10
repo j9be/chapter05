@@ -11,7 +11,7 @@ public class MyMicroBenchmark {
         final int N = 50;
         long start = System.nanoTime();
         for (int i = 0; i < N; i++) {
-            new ParallelGamePlayer(16, 1).playParallel();
+            new ParallelGamePlayer(1, 1).play();
         }
         long d_16_1 = System.nanoTime() - start;
         System.out.println(d_16_1);

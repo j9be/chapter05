@@ -10,7 +10,6 @@ public class ColorManagerTest {
     @Test
     public void thereIsAFirstColor() {
         ColorManager manager = new ColorManager(NR_COLORS, Color::new);
-        System.out.println(manager.firstColor());
         Assert.assertNotNull(manager.firstColor());
     }
 

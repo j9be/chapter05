@@ -8,16 +8,16 @@ public class Row {
     final protected Guess guess;
     final protected int full;
     final protected int partial;
-    public static final Row none = new Row(Guess.none,0,0);
+    public static final Row none = new Row(Guess.none, 0, 0);
 
-    public Row(Guess guess,int full, int partial) {
+    public Row(Guess guess, int full, int partial) {
         this.guess = guess;
         this.full = full;
         this.partial = partial;
     }
 
     protected Row(Row cloneFrom) {
-        this(cloneFrom.guess,cloneFrom.full,cloneFrom.partial);
+        this(cloneFrom.guess, cloneFrom.full, cloneFrom.partial);
     }
 
     public boolean matches(Guess guess) {
@@ -27,6 +27,10 @@ public class Row {
 
     public int nrOfColumns() {
         return guess.nrOfColumns();
+    }
+
+    public String toString() {
+        return guess.toString() + " " + full + "/" + partial;
     }
 
 }

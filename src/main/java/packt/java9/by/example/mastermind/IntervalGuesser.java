@@ -27,6 +27,7 @@ public class IntervalGuesser extends UniqueGuesser implements Runnable {
     @Override
     public void run() {
         thisThread = Thread.currentThread();
+        thisThread.setName("guesser [" + start + "," + end + "]");
         Guess guess = guess();
         try {
             while (guess != Guess.none) {
