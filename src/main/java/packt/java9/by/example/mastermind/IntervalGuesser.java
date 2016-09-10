@@ -18,16 +18,22 @@ public class IntervalGuesser extends UniqueGuesser implements Runnable {
         nextGuess = start;
     }
 
+    private Thread thisThread;
+
+    public void interrupt() {
+        thisThread.interrupt();
+    }
+
     @Override
     public void run() {
+        thisThread = Thread.currentThread();
         Guess guess = guess();
         try {
             while (guess != Guess.none) {
                 guessQueue.put(guess);
                 guess = guess();
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
         }
     }
 

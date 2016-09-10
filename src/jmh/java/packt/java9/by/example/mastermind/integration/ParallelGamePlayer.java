@@ -1,48 +1,61 @@
 package packt.java9.by.example.mastermind.integration;
 
 
-import org.junit.Assert;
-import org.junit.Test;
 import packt.java9.by.example.mastermind.*;
 import packt.java9.by.example.mastermind.lettered.LetteredColorFactory;
 
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class ParallelGameTest {
+public class ParallelGamePlayer {
 
-    private final int NR_COLORS = 6;
+    private static final int NR_COLORS = 10;
     final ColorManager manager = new ColorManager(NR_COLORS, new LetteredColorFactory());
-    private final int NR_COLUMNS = 4;
-    private final int NR_THREADS = 4;
-    private BlockingQueue<Guess> guessQueue = new ArrayBlockingQueue<Guess>(NR_THREADS*2);
+    private static final int NR_COLUMNS = 6;
+    private final int nrThreads;
+    private final BlockingQueue<Guess> guessQueue;
 
-    @Test
-    public void testSimpleGame() throws ExecutionException, InterruptedException {
+    public ParallelGamePlayer(int nrThreads, int queueSize) {
+        guessQueue = new ArrayBlockingQueue<Guess>(nrThreads * queueSize);
+        this.nrThreads = nrThreads;
+    }
+
+    public void playParallel() {
         Table table = new Table(NR_COLUMNS, manager);
         Guess secret = createSecret();
-        System.out.println(PrettyPrintRow.pprint(new Row(secret, NR_COLUMNS, 0)));
-        System.out.println();
         Game game = new Game(table, secret);
         final IntervalGuesser[] guessers = createGuessers(table);
-        startGuessers(guessers);
+        startAsynchronousGuessers(guessers);
+        final Guesser finalCheckGuesser = new UniqueGuesser(table);
         int serial = 1;
-        while (!game.isFinished()) {
-            Guess guess = guessQueue.take();
-            if (guess == Guess.none) {
-                Assert.fail();
+        try {
+            while (!game.isFinished()) {
+                final Guess guess = guessQueue.take();
+                if (finalCheckGuesser.guessMatch(guess)) {
+                    game.addNewGuess(guess);
+                    serial++;
+                }
             }
-            Row row = game.addNewGuess(guess);
-            System.out.print("" + serial + ". ");
-            serial++;
-            System.out.println(PrettyPrintRow.pprint(row));
+        } catch (InterruptedException ie) {
+
+        } finally {
+            stopAsynchronousGuessers(guessers);
         }
     }
 
-    private void startGuessers(IntervalGuesser[] guessers) {
-        Executor executor = Executors.newFixedThreadPool(NR_THREADS);
+    private ExecutorService executorService;
+
+    private void startAsynchronousGuessers(IntervalGuesser[] guessers) {
+        executorService = Executors.newFixedThreadPool(nrThreads);
         for (IntervalGuesser guesser : guessers) {
-            executor.execute(guesser);
+            executorService.execute(guesser);
         }
+    }
+
+    private void stopAsynchronousGuessers(IntervalGuesser[] guessers) {
+        executorService.shutdown();
     }
 
     private Guess createSecret() {
@@ -63,16 +76,13 @@ public class ParallelGameTest {
     private IntervalGuesser[] createGuessers(Table table) {
         final Color[] colors = new Color[NR_COLUMNS];
         Guess start = firstIntervalStart(colors);
-        final IntervalGuesser[] guessers = new IntervalGuesser[NR_THREADS];
-        for (int i = 0; i < NR_THREADS - 1; i++) {
+        final IntervalGuesser[] guessers = new IntervalGuesser[nrThreads];
+        for (int i = 0; i < nrThreads - 1; i++) {
             Guess end = nextIntervalStart(colors);
             guessers[i] = new IntervalGuesser(table, start, end, guessQueue);
             start = end;
         }
-        guessers[NR_THREADS - 1] = new IntervalGuesser(table, start, Guess.none, guessQueue);
-        for (Guesser guesser : guessers) {
-            System.out.println(guesser.toString());
-        }
+        guessers[nrThreads - 1] = new IntervalGuesser(table, start, Guess.none, guessQueue);
         return guessers;
     }
 
@@ -86,7 +96,7 @@ public class ParallelGameTest {
 
     private Guess nextIntervalStart(Color[] colors) {
         final int index = colors.length - 1;
-        int step = NR_COLORS / NR_THREADS;
+        int step = NR_COLORS / nrThreads;
         if (step == 0) {
             step = 1;
         }
