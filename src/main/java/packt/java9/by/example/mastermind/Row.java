@@ -5,9 +5,9 @@ package packt.java9.by.example.mastermind;
  * number of matching colors and getColor.
  */
 public class Row {
-    final protected Guess guess;
-    final protected int full;
-    final protected int partial;
+    protected final Guess guess;
+    protected final int full;
+    protected final int partial;
     public static final Row none = new Row(Guess.none, 0, 0);
 
     public Row(Guess guess, int full, int partial) {

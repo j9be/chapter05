@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Guess {
-    final static public Guess none = new Guess(new Color[0]);
-    final private Color[] colors;
+    public final static Guess none = new Guess(new Color[0]);
+    private final Color[] colors;
     private boolean uniquenessWasNotCalculated = true;
     private boolean unique;
 

@@ -5,7 +5,7 @@ import packt.java9.by.example.mastermind.ColorManager;
 import packt.java9.by.example.mastermind.Guess;
 
 public class SimpleSecret implements Secret {
-    final private ColorManager manager;
+    private final ColorManager manager;
 
     public SimpleSecret(ColorManager manager) {
         this.manager = manager;

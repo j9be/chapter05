@@ -5,7 +5,7 @@ import packt.java9.by.example.mastermind.ColorFactory;
 
 public class LetteredColorFactory implements ColorFactory {
 
-    private final String letters = "0123456789ABCDEFGHIJKLMNOPQRSTVWXYZabcdefghijklmnopqrstvwxzy";
+    private static final String letters = "0123456789ABCDEFGHIJKLMNOPQRSTVWXYZabcdefghijklmnopqrstvwxzy";
     private int counter = 0;
 
     @Override
