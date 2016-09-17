@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ColorManager {
-    final protected int nrColors;
-    final protected Map<Color, Color> successor = new HashMap<>();
+    protected final int nrColors;
+    protected final Map<Color, Color> successor = new HashMap<>();
     private Color first;
     private final ColorFactory factory;
 
