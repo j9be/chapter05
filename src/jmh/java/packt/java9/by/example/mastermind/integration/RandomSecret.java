@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RandomSecret implements Secret {
-    final private ColorManager manager;
+    private final ColorManager manager;
 
     public RandomSecret(ColorManager manager) {
         this.manager = manager;
