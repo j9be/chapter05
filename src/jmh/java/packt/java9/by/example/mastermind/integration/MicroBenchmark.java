@@ -23,9 +23,9 @@ public class MicroBenchmark {
 
     @State(Scope.Benchmark)
     public static class ThreadsAndQueueSizes {
-        @Param(value = {"16"})
+        @Param(value = {"1", "4", "8", "16", "32"})
         String nrThreads;
-        @Param(value = { "10"})
+        @Param(value = { "1", "10", "100", "1000000"})
         String queueSize;
 
     }

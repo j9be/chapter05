@@ -11,7 +11,7 @@ public class SimpleGamePlayer implements Player {
     @Override
     public void play() {
         Table table = new Table(nrColumns, manager);
-        Secret secret = new RandomSecret(manager);
+        Secret secret = new SimpleSecret(manager);
         Guess secretGuess = secret.createSecret(nrColumns);
         Game game = new Game(table, secretGuess);
 
