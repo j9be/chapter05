@@ -5,10 +5,7 @@ import packt.java9.by.example.mastermind.*;
 import packt.java9.by.example.mastermind.lettered.LetteredColorFactory;
 
 import java.util.LinkedList;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 public class ParallelGamePlayer implements Player {
 
@@ -19,7 +16,11 @@ public class ParallelGamePlayer implements Player {
     private final BlockingQueue<Guess> guessQueue;
 
     public ParallelGamePlayer(int nrThreads, int queueSize) {
-        guessQueue = new ArrayBlockingQueue<Guess>(nrThreads * queueSize);
+        if (queueSize == -1) {
+            guessQueue = new LinkedBlockingDeque<Guess>();
+        } else {
+            guessQueue = new ArrayBlockingQueue<Guess>(nrThreads * queueSize);
+        }
         this.nrThreads = nrThreads;
     }
 

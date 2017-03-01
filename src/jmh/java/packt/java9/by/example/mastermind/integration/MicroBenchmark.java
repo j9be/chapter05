@@ -23,9 +23,9 @@ public class MicroBenchmark {
 
     @State(Scope.Benchmark)
     public static class ThreadsAndQueueSizes {
-        @Param(value = {"1", "4", "8", "16", "32"})
+        @Param(value = {"1", "4", "8"})
         String nrThreads;
-        @Param(value = { "1", "10", "100", "1000000"})
+        @Param(value = {"-1", "1", "10", "100", "1000000"})
         String queueSize;
 
     }
@@ -40,7 +40,7 @@ public class MicroBenchmark {
 
     @Benchmark
     @Fork(1)
-    public void playSimple(){
+    public void playSimple() {
         new SimpleGamePlayer().play();
     }
 

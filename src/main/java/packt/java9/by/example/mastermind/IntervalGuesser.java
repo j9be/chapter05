@@ -7,7 +7,7 @@ public class IntervalGuesser extends UniqueGuesser implements Runnable {
 
     private final Guess end;
     private Guess lastGuess;
-    private final BlockingQueue guessQueue;
+    private final BlockingQueue<Guess> guessQueue;
 
     public IntervalGuesser(Table table, Guess start, Guess end, BlockingQueue<Guess> guessQueue) {
         super(table);
@@ -18,16 +18,9 @@ public class IntervalGuesser extends UniqueGuesser implements Runnable {
         nextGuess = start;
     }
 
-    private Thread thisThread;
-
-    public void interrupt() {
-        thisThread.interrupt();
-    }
-
     @Override
     public void run() {
-        thisThread = Thread.currentThread();
-        thisThread.setName("guesser [" + start + "," + end + "]");
+        Thread.currentThread().setName("guesser [" + start + "," + end + "]");
         Guess guess = guess();
         try {
             while (guess != Guess.none) {
